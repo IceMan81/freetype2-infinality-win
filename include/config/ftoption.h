@@ -92,7 +92,7 @@ FT_BEGIN_HEADER
   /* This is done to allow FreeType clients to run unmodified, forcing     */
   /* them to display normal gray-level anti-aliased glyphs.                */
   /*                                                                       */
-/* #define FT_CONFIG_OPTION_SUBPIXEL_RENDERING */
+#define FT_CONFIG_OPTION_SUBPIXEL_RENDERING
 
 
   /*************************************************************************/
@@ -238,7 +238,7 @@ FT_BEGIN_HEADER
   /*                                                                       */
   /*   Define this macro if you want to enable this `feature'.             */
   /*                                                                       */
-/* #define FT_CONFIG_OPTION_USE_HARFBUZZ */
+#define FT_CONFIG_OPTION_USE_HARFBUZZ
 
 
   /*************************************************************************/
@@ -282,6 +282,9 @@ FT_BEGIN_HEADER
 /* #define FT_EXPORT(x)      extern x */
 /* #define FT_EXPORT_DEF(x)  x */
 
+#define FT_EXPORT(x) __declspec(dllexport) x
+#define FT_EXPORT_DEF(x) __declspec(dllexport) x
+#define FT_BASE(x) __declspec(dllexport) x
 
   /*************************************************************************/
   /*                                                                       */
@@ -602,8 +605,19 @@ FT_BEGIN_HEADER
   /*   This option requires TT_CONFIG_OPTION_BYTECODE_INTERPRETER to be    */
   /*   defined.                                                            */
   /*                                                                       */
-/* #define TT_CONFIG_OPTION_SUBPIXEL_HINTING */
+#define TT_CONFIG_OPTION_SUBPIXEL_HINTING
 
+
+  /*************************************************************************/
+  /*                                                                       */
+  /* Define FT_CONFIG_OPTION_INFINALITY_PATCHSET if you want to enable     */
+  /* all additional infinality patches, which are configured via env       */
+  /* variables.                                                            */
+  /*                                                                       */
+  /*   This option requires TT_CONFIG_OPTION_SUBPIXEL_HINTING to           */
+  /*   defined.                                                            */
+  /*                                                                       */
+#define FT_CONFIG_OPTION_INFINALITY_PATCHSET
 
   /*************************************************************************/
   /*                                                                       */
@@ -671,7 +685,8 @@ FT_BEGIN_HEADER
   /*   http://www.microsoft.com/typography/otspec/glyf.htm                 */
   /*   https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6glyf.html */
   /*                                                                       */
-#undef TT_CONFIG_OPTION_COMPONENT_OFFSET_SCALED
+//#undef TT_CONFIG_OPTION_COMPONENT_OFFSET_SCALED
+#define TT_CONFIG_OPTION_COMPONENT_OFFSET_SCALED
 
 
   /*************************************************************************/
