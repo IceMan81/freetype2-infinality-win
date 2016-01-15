@@ -22,7 +22,10 @@
 #include FT_LCD_FILTER_H
 #include FT_IMAGE_H
 #include FT_INTERNAL_OBJECTS_H
-
+#include <math.h>
+#include <string.h>
+#include <string.h>
+#include "ftinf.h"
 
 #ifdef FT_CONFIG_OPTION_SUBPIXEL_RENDERING
 
@@ -305,11 +308,60 @@
   FT_Library_SetLcdFilter( FT_Library    library,
                            FT_LcdFilter  filter )
   {
-    static const FT_Byte  default_filter[5] =
-                            { 0x08, 0x4d, 0x56, 0x4d, 0x08 };
+#ifndef FT_CONFIG_OPTION_INFINALITY_PATCHSET
     static const FT_Byte  light_filter[5] =
                             { 0x00, 0x55, 0x56, 0x55, 0x00 };
-
+    static const FT_Byte  default_filter[5] =
+                            { 0x08, 0x4d, 0x56, 0x4d, 0x08 };
+#else
+    FT_Byte light_filter[5];
+    FT_Byte default_filter[5];
+    if( ftinf ){
+        if( ftinf->lcd_filter[0] )
+        {
+            const int *f=ftinf->lcd_filter;
+            /* Assume we were given integers [0-100] get them to [0-255] */
+            int val; /* 2611=2.55*1024 */
+            val=(f[1]*2611+512)>>10; if( val > 255 ) val=255;
+            default_filter[0] = (FT_Byte) val;
+            val=(f[2]*2611+512)>>10; if( val > 255 ) val=255;
+            default_filter[1] = (FT_Byte) val;
+            val=(f[3]*2611+512)>>10; if( val > 255 ) val=255;
+            default_filter[2] = (FT_Byte) val;
+            val=(f[4]*2611+512)>>10; if( val > 255 ) val=255;
+            default_filter[3] = (FT_Byte) val;
+            val=(f[5]*2611+512)>>10; if( val > 255 ) val=255;
+            default_filter[4] = (FT_Byte) val;
+        } else {
+            default_filter[0]=0x08;
+            default_filter[1]=0x4d;
+            default_filter[2]=0x56;
+            default_filter[3]=0x4d;
+            default_filter[4]=0x08;
+        }
+        if( ftinf->lcd_filter_light[0] ){
+            const int *f=ftinf->lcd_filter_light;
+            /* Assume we were given integers [0-100] get them to [0-255] */
+            int val; /* 2611=2.55*1024 */
+            val=(f[1]*2611+512)>>10; if( val > 255 ) val=255;
+            light_filter[0] = (FT_Byte) val;
+            val=(f[2]*2611+512)>>10; if( val > 255 ) val=255;
+            light_filter[1] = (FT_Byte) val;
+            val=(f[3]*2611+512)>>10; if( val > 255 ) val=255;
+            light_filter[2] = (FT_Byte) val;
+            val=(f[4]*2611+512)>>10; if( val > 255 ) val=255;
+            light_filter[3] = (FT_Byte) val;
+            val=(f[5]*2611+512)>>10; if( val > 255 ) val=255;
+            light_filter[4] = (FT_Byte) val;
+        } else {
+            light_filter[0]=0x00;
+            light_filter[1]=0x55;
+            light_filter[2]=0x56;
+            light_filter[3]=0x55;
+            light_filter[4]=0x00;
+        }
+    }
+#endif
 
     if ( !library )
       return FT_THROW( Invalid_Library_Handle );
@@ -353,8 +405,14 @@
 
     case FT_LCD_FILTER_LEGACY:
     case FT_LCD_FILTER_LEGACY1:
+#ifndef FT_CONFIG_OPTION_INFINALITY_PATCHSET
       library->lcd_filter_func = _ft_lcd_filter_legacy;
       library->lcd_extra       = 0;
+#else
+      ft_memcpy( library->lcd_weights, default_filter, 5 );
+      library->lcd_filter_func = _ft_lcd_filter_fir;
+      library->lcd_extra       = 2;
+#endif
       break;
 
 #endif

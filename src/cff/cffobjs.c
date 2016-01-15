@@ -34,6 +34,9 @@
 
 #include "cfferrs.h"
 
+#ifdef FT_CONFIG_OPTION_INFINALITY_PATCHSET
+#include "../base/ftinf.h"
+#endif
 
   /*************************************************************************/
   /*                                                                       */
@@ -1053,6 +1056,9 @@
 #endif
 
     driver->no_stem_darkening = TRUE;
+#ifdef FT_CONFIG_OPTION_INFINALITY_PATCHSET
+    if(ftinf) driver->no_stem_darkening = !ftinf->stem_darkening_cff;
+#endif /* FT_CONFIG_OPTION_INFINALITY_PATCHSET */
 
     driver->darken_params[0] = CFF_CONFIG_OPTION_DARKENING_PARAMETER_X1;
     driver->darken_params[1] = CFF_CONFIG_OPTION_DARKENING_PARAMETER_Y1;

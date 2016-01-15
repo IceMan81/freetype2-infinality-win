@@ -43,7 +43,9 @@
 #include FT_INTERNAL_DEBUG_H
 #include FT_MODULE_H
 #include "basepic.h"
-
+#ifdef FT_CONFIG_OPTION_INFINALITY_PATCHSET
+#include "ftinf.h"
+#endif
 
   /*************************************************************************/
   /*                                                                       */
@@ -253,9 +255,13 @@
     error = FT_New_Library( memory, alibrary );
     if ( error )
       FT_Done_Memory( memory );
-    else
+    else {
       FT_Add_Default_Modules( *alibrary );
-
+#ifdef FT_CONFIG_OPTION_INFINALITY_PATCHSET
+      /* get Infinality settings */
+      ftinf_env();
+#endif
+    }
     return error;
   }
 

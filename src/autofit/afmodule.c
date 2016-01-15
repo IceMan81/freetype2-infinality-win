@@ -22,6 +22,10 @@
 #include "aferrors.h"
 #include "afpic.h"
 
+#ifdef FT_CONFIG_OPTION_INFINALITY_PATCHSET
+#include "../base/ftinf.h"
+#endif
+
 #ifdef FT_DEBUG_AUTOFIT
 
 #ifndef FT_MAKE_OPTION_SINGLE_OBJECT
@@ -369,9 +373,12 @@
     module->fallback_style    = AF_STYLE_FALLBACK;
     module->default_script    = AF_SCRIPT_DEFAULT;
 #ifdef AF_CONFIG_OPTION_USE_WARPER
-    module->warping           = 0;
+    module->warping           = 1;
 #endif
     module->no_stem_darkening = TRUE;
+#ifdef FT_CONFIG_OPTION_INFINALITY_PATCHSET
+    if(ftinf) module->no_stem_darkening = !ftinf->stem_darkening_autofit;
+#endif /* FT_CONFIG_OPTION_INFINALITY_PATCHSET */
 
     module->darken_params[0]  = CFF_CONFIG_OPTION_DARKENING_PARAMETER_X1;
     module->darken_params[1]  = CFF_CONFIG_OPTION_DARKENING_PARAMETER_Y1;

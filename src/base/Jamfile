@@ -55,6 +55,7 @@ SubDir  FT2_TOP $(FT2_SRC_DIR) base ;
                     ftglyph
                     ftgxval
                     ftinit
+                    ftinf
                     ftlcdfil
                     ftmm
                     ftotval
